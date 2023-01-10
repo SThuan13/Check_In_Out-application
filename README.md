@@ -1,6 +1,8 @@
-<<<<<<< HEAD
-# CheckInOut_System
-=======
+
+# Employee check in, check out System using yii2 advanced template
+
+
+
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
