@@ -35,7 +35,7 @@ use yii\helpers\Url;
 				<a 
 					class="nav-link"
 					href="
-						<?= Url::to(['employee/profile']);?>
+						<?= Url::to(['detail/profile']);?>
 					"
 				>
 					<span data-feather="shopping-cart" class="align-text-bottom"></span>

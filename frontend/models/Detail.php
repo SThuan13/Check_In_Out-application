@@ -12,9 +12,12 @@ use Yii;
  * @property string|null $name
  * @property string|null $email
  * @property string|null $phoneNumber
+ * @property int $user_id 
  * @property int|null $department_id
  *
  * @property Department $department
+ * @property DetailGroup[] $detailGroups 
+ * @property Group[] $groups 
  * @property User $user
  */
 class Detail extends \yii\db\ActiveRecord
@@ -65,6 +68,31 @@ class Detail extends \yii\db\ActiveRecord
     public function getDepartment()
     {
         return $this->hasOne(Department::class, ['id' => 'department_id']);
+    }
+
+    /**
+     * Gets query for [[DetailGroups]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getDetailGroups()
+    {
+        return $this->hasMany(DetailGroup::class, ['detail_id' => 'id']);
+    }
+
+    /** 
+     * Gets query for [[Groups]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getGroups()
+    {
+        return $this->hasMany(Group::class, ['id' => 'group_id'])->viaTable('detail_group', ['detail_id' => 'id']);
+    }
+
+    public function getGroup()
+    {
+        return $this->hasOne(Group::class, ['id' => 'group_id'])->viaTable('detail_group', ['detail_id' => 'id']);
     }
 
     /**

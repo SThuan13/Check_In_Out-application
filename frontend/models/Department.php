@@ -41,7 +41,7 @@ class Department extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'Mã',
-            'name' => 'Tên',
+            'name' => 'Tên phòng ban',
             'description' => 'Mô tả',
         ];
     }
