@@ -1,0 +1,89 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+use app\models\Detail;
+use app\models\Department;
+
+/**
+ * This is the model class for table "attendance".
+ *
+ * @property int $id	
+ * @property int $user_id
+ * @property string $date
+ * @property string $timeIn
+ * @property int $inStatus
+ * @property string|null $timeOut
+ * @property int|null $outStatus
+ *
+ * @property User $user
+ */
+class Attendance extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'attendance';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['user_id', 'date', 'timeIn', 'inStatus'], 'required'],
+            [['user_id', 'inStatus', 'outStatus'], 'integer'],
+            [['date', 'timeIn', 'timeOut'], 'safe'],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'user_id' => 'Mã nhân viên',
+            'date' => 'Ngày',
+            'timeIn' => 'Giờ vào',
+            'inStatus' => 'Trạng thái vào ',
+            'timeOut' => 'Giờ ra',
+            'outStatus' => 'Trạng thái ra',
+        ];
+    }
+
+    /**
+    * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {   
+        return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function getDetail()
+    {
+        $detail = Detail::find()->where(['user_id' => $this->getUser()->one()->getAttribute('id')]);
+        //$department = Department::find()->where(['id' => $this->getDetail()->one()->getAttribute('department_id')]);
+        if($detail == NUll)
+        return ;
+        else return $detail;
+    }
+
+    // public function getDepartment()
+    // {
+    //     $department = Department::find()->where(['id' => $this->getDetail()->one()->getAttribute('department_id')]);
+        
+    //     if($department == NUll)
+    //     return 0;
+    //     else return $department;
+    // }
+
+}
