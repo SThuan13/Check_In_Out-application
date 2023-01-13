@@ -42,53 +42,97 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find()
-            // ->leftJoin('detail','detail.user_id = user.id')
-            ->joinWith('detail')
-            ->leftJoin('department','detail.department_id = department.id')
-        ;
+        $query = User::list();
+        // $query = User::find()
+        //     // ->leftJoin('detail','detail.user_id = user.id')
+        //     ->joinWith('detail')
+        //     ->leftJoin('department','detail.department_id = department.id')
+        // ;
 
-        // add conditions that should always apply here
+        // // add conditions that should always apply here
 
         // $user = Yii::$app->user->identity;
+        
         // $userId = $user->id;
-        // $employee = Employee::findOne(['user_id' => $userId]);
-        // if ($employee != Null)
-        // {
-        //     $departmentId = $employee->attributes['department_id'];
-        // }
-
+        // // $employee = Employee::findOne(['user_id' => $userId]);
+        // // if ($employee != Null)
+        // // {
+        // //     $departmentId = $employee->attributes['department_id'];
+        // // }
         // $auth = Yii::$app->authManager;
 
         // $roleName = $auth->getRolesByUser($userId); 
         // if (array_key_exists('admin', $roleName)) 
         // { 
-        //     //code
+        //     //
+        //     //echo 'yes a';
+
         // }
         // else if($auth->getAssignment('departmentManager', $userId) != Null )
         // {
-        //     $query = $query
-        //                 ->where(['department_id' => $departmentId])
-        //                 ->andWhere(['<>','employee.id', $employee->attributes['id']])
-        //             ;
-        // }
-        // else {
-        //     $ids = Employee::findAll(['user_id' => $auth->getUserIdsByRole('departmentManager')]);
+        //     $detail = Detail::findOne(['user_id' => $userId]);
+        //     $departmentId = $detail->attributes['department_id'];
+            
+        //     $ids = User::findAll(['id' => $auth->getUserIdsByRole('admin')]);
         //     $strIds = '';
         //     foreach($ids as $id)
         //     {
+        //         //echo
         //         $strIds .= $id->attributes['id']. ',';
         //     }
-
-        //     $groupId = $employee->getGroups()->one()->attributes['id'];
+        //     $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+        //     foreach($ids as $id)
+        //     {
+        //         //echo
+        //         $strIds .= $id->attributes['id']. ',';
+        //     }
+        //     //
+        //     //echo 'yes d M';
+        //     $query = $query
+        //                 ->where(['detail.department_id' => $departmentId])
+        //                 ->andWhere(['<>','user.id', $userId])
+        //                 ->andWhere(['NOT IN', 'user.id', [$strIds]])
+        //             ;
+        // }
+        // else {
+        //     //echo "<pre>";
+        //     //print_r($auth->getUserIdsByRole('departmentManager'));
+        //     $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+        //     $strIds = '';
+        //     foreach($ids as $id)
+        //     {
+        //         //echo
+        //         $strIds .= $id->attributes['id']. ',';
+        //     }
+        //     //echo $strIds;
+        //     //print_r($ids);
+        //     //die();
+        //     $detail = Detail::findOne(['user_id' => $userId]);
+        //     $groupId = $detail->getGroups()->one()->attributes['id'];
+        //     // $query = (new Query())
+        //     //     ->select(['attendance.id', 'department_id', 'attendance.employee_id', 'date', 'timeIn', 'inStatus', 'timeOut', 'outStatus' ])
+        //     //     ->from(['attendance', 'employee_group'])
+        //     //     ->where(['attendance.employee_id = employee_group.employee_id','employee_group.group_id' => $groupId])
+        //     //     ->all()
+        //     //     ;
+        //     // $query = (new Query())
+        //     // ->select(['attendance.id', 'department_id', 'attendance.employee_id', 'date', 'timeIn', 'inStatus', 'timeOut', 'outStatus' ])
+        //     //     ->from(['attendance'])
+        //     //     ->leftJoin('employee_group', 'attendance.employee_id = employee_group.employee_id')
+        //     //     ->where(['employee_group.group_id' => $groupId])
+        //     //     //->all()
+        //     // ;
+        //     //echo "<prev>";
+        //     //echo $groupId;
+        //     //print_r($query);
 
         //     $query = $query
-        //         ->leftJoin('employee_group', 'employee.id = employee_group.employee_id')
-        //         ->where(['employee_group.group_id' => $groupId])
-        //         ->andWhere(['<>','employee.id', $employee->attributes['id']])
-        //         ->andWhere(['NOT IN', 'employee.id', [$strIds]])
+        //         ->where(['detail_group.group_id' => $groupId])
+        //         ->andWhere(['<>','user.id', $userId])
+        //         ->andWhere(['NOT IN', 'user.id', [$strIds]])
         //     ;
         // }
+
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -120,6 +164,20 @@ class UserSearch extends User
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['=', 'status', $this->status])
         ;
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'id',
+                'username',
+                'detail.name',
+                'detail.email',
+                'detail.phoneNumber',
+                //'department.name',
+                'status',
+                'created_at',
+                'updated_at',
+            ]
+        ]);
 
         return $dataProvider;
     }

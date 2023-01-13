@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'department_id')->dropDownList(
-        ArrayHelper::map(Department::find()->all(), 'id', 'name'),
+        ArrayHelper::map(Department::list()->all(), 'id', 'name'),
         ['prompt' => 'Chọn phòng ban']
     ) ?>
 

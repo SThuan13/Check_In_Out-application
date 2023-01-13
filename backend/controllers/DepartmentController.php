@@ -36,7 +36,7 @@ class DepartmentController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'create', 'update', 'view', 'delete'],
+                            'actions' => ['index', 'create', 'update', 'view'],
                             'roles' => ['departmentManager'],
                             // 'roleParams' => function() {
                             //     //return ['post' => Post::findOne(['id' => Yii::$app->request->get('id')])];

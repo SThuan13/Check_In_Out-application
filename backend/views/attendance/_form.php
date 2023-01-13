@@ -22,7 +22,7 @@ $array = [
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'user_id')->dropDownList(
-        ArrayHelper::map(User::find()->all(), 'id', 'username'),
+        ArrayHelper::map(User::list()->all(), 'id', 'username'),
         ['prompt' => 'Chọn nhân viên']
     ) ?>
 

@@ -39,7 +39,7 @@ class DetailGroupSearch extends DetailGroup
      */
     public function search($params)
     {
-        $query = DetailGroup::find();
+        $query = DetailGroup::list();
 
         // add conditions that should always apply here
 

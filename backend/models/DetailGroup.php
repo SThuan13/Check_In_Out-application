@@ -67,4 +67,53 @@ class DetailGroup extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Group::class, ['id' => 'group_id']);
     }
+
+    public static function list()
+    {
+        $query = DetailGroup::find()
+            ->joinWith('detail')
+            ->joinWith('group')
+            ->leftJoin('department', 'detail.department_id = department.id')
+            ->leftJoin('user', 'user.id = detail.user_id');
+
+        $user = Yii::$app->user->identity;
+
+        $userId = $user->id;
+        $auth = Yii::$app->authManager;
+
+        $roleName = $auth->getRolesByUser($userId);
+        if (array_key_exists('admin', $roleName)) {
+        } else if ($auth->getAssignment('departmentManager', $userId) != Null) {
+            $detail = Detail::findOne(['user_id' => $userId]);
+            $departmentId = $detail->attributes['department_id'];
+
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('admin')]);
+            $strIds = '';
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $query = $query
+                ->where(['detail.department_id' => $departmentId])
+                ->andWhere(['<>', 'user.id', $userId])
+                ->andWhere(['NOT IN', 'user.id', [$strIds]]);
+        } else {
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+            $strIds = '';
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $detail = Detail::findOne(['user_id' => $userId]);
+            $groupId = $detail->getGroups()->one()->attributes['id'];
+
+            $query = $query
+                ->where(['detail_group.group_id' => $groupId])
+                ->andWhere(['<>', 'user.id', $userId])
+                ->andWhere(['NOT IN', 'user.id', [$strIds]]);
+        }
+        return $query;
+    }
 }

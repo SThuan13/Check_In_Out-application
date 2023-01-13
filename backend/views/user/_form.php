@@ -48,7 +48,7 @@ $statusArr = [
     <?= $form->field($detail, 'phoneNumber')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($detail, 'department_id')->dropDownList(
-        ArrayHelper::map(Department::find()->all(), 'id', 'name'),
+        ArrayHelper::map(Department::list()->all(), 'id', 'name'),
             ['prompt' => 'Chọn phòng ban'] 
     )?>
 

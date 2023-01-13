@@ -49,8 +49,8 @@ class GroupSearch extends Group
         //         ->andWhere(['<>','attendance.employee_id', $employee->attributes['id']])
         //         ->andWhere(['NOT IN', 'attendance.employee_id', [$strIds]])
         //     ;
-        $query = Group::find()
-            ->leftJoin('department', 'department.id = group.department_id')
+        $query = Group::list()
+            //->leftJoin('department', 'department.id = group.department_id')
         ;
 
         // add conditions that should always apply here

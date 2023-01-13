@@ -123,15 +123,62 @@ class User extends \yii\db\ActiveRecord
         // if (array_key_exists('admin', $roleName)) {
         //     return;
         // } else 
-        
+
         //return Department::find()->where(['id' => $this->getDetail()->one()->getAttribute('department_id')]);
-        
+
         $department = Department::find()->where(['id' => $this->getDetail()->one()->getAttribute('department_id')]);
-        
-        if($department == NUll)
-        return 0;
+
+        if ($department == NUll)
+            return 0;
         else return $department;
         //$this->hasOne(Employee::class, ['user_id' => 'id']);
     }
 
+    public static function list()
+    {
+        $query = User::find()
+            ->joinWith('detail')
+            ->leftJoin('department', 'detail.department_id = department.id')
+            ->leftJoin('detail_group', 'detail_group.detail_id = detail.id');
+
+        $user = Yii::$app->user->identity;
+
+        $userId = $user->id;
+        $auth = Yii::$app->authManager;
+
+        $roleName = $auth->getRolesByUser($userId);
+        if (array_key_exists('admin', $roleName)) {
+        } else if ($auth->getAssignment('departmentManager', $userId) != Null) {
+            $detail = Detail::findOne(['user_id' => $userId]);
+            $departmentId = $detail->attributes['department_id'];
+
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('admin')]);
+            $strIds = '';
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $query = $query
+                ->where(['detail.department_id' => $departmentId])
+                ->andWhere(['<>', 'user.id', $userId])
+                ->andWhere(['NOT IN', 'user.id', [$strIds]]);
+        } else {
+            $ids = User::findAll(['id' => $auth->getUserIdsByRole('departmentManager')]);
+            $strIds = '';
+            foreach ($ids as $id) {
+                $strIds .= $id->attributes['id'] . ',';
+            }
+            $detail = Detail::findOne(['user_id' => $userId]);
+            $groupId = $detail->getGroups()->one()->attributes['id'];
+
+            $query = $query
+                ->where(['detail_group.group_id' => $groupId])
+                ->andWhere(['<>', 'user.id', $userId])
+                ->andWhere(['NOT IN', 'user.id', [$strIds]]);
+        }
+        return $query;
+    }
 }

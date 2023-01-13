@@ -40,7 +40,7 @@ class DepartmentSearch extends Department
      */
     public function search($params)
     {
-        $query = Department::find();
+        $query = Department::list();
 
         // add conditions that should always apply here
 
